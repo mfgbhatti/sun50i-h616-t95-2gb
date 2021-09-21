@@ -23,3 +23,9 @@
 - USB – 2x USB 2.0 ports
 - Misc – Power LED
 - Power Supply – DC 5V/2A
+
+## The Origin of Files
+- Device tree file and kernel config are extacted from running tvbox.
+- bl31.bin is generated bu using [arm-trusted-firmware](https://github.com/apritzel/arm-trusted-firmware.git).
+- fex files are extracted from firmware update image file(x27.img released
+  21-07-2021).
