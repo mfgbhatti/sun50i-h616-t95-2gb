@@ -1,5 +1,5 @@
-# Device
-## Allwinner H616 quad-core Arm Cortex-A53 processor with Arm Mali G31 MP2 GPU with support for OpenGL ES 3.2 and Vulkan
+## Allwinner H616 quad-core Arm Cortex-A53
+-  Mali G31 MP2 GPU with support for OpenGL ES 3.2 and Vulkan
 - System Memory – 2GB/4GB SDRAM
 - Storage – 8GB/32GB/64GB eMMC flash, MicroSD card slot
 - Video Output – HDMI 2.0a up to 4K @ 60 Hz
