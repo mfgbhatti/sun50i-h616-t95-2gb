@@ -492,8 +492,8 @@ CONFIG_RANDOMIZE_MODULE_REGION_FULL=y
 #
 # Boot options
 #
-CONFIG_CMDLINE="earlyprintk=sunxi-uart,0x05000000 loglevel=8 initcall_debug=1 console=ttyS0 init=/init"
-CONFIG_CMDLINE_FROM_BOOTLOADER=y
+#CONFIG_CMDLINE="earlyprintk=sunxi-uart,0x05000000 loglevel=8 initcall_debug=1 console=ttyS0 init=/init"
+#CONFIG_CMDLINE_FROM_BOOTLOADER=y
 # CONFIG_CMDLINE_EXTEND is not set
 # CONFIG_CMDLINE_FORCE is not set
 # CONFIG_EFI is not set
