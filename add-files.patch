@@ -32,7 +32,7 @@ index 0000000000..129fd1687c
 +#include <dt-bindings/leds/common.h>
 +
 +/ {
-+	model = "H616 T95 2GB";
++	model = "H616 T95";
 +	compatible = "allwinner,sun50i-h616";
 +
 +	aliases {
@@ -485,7 +485,7 @@ index 0000000000..8180077180
 +			};
 +
 +			uart1_rts_cts_pins: uart1-rts-cts-pins {
-+				pins = "PG8", "PG9";
++				pins = "PG8", "PG9";t95
 +				function = "uart1";
 +			};
 +		};
@@ -966,6 +966,20 @@ index 0000000000..8180077180
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +		};
++		r_rsb: rsb@7083000 {
++			compatible = "allwinner,sun50i-h616-rsb",
++				     "allwinner,sun8i-a23-rsb";
++			reg = <0x07083000 0x400>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&r_ccu CLK_R_APB2_RSB>;
++			clock-frequency = <3000000>;
++			resets = <&r_ccu RST_R_APB2_RSB>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_rsb_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
 +	};
 +};
 diff --git a/configs/sun50i-h616-t95_defconfig b/configs/sun50i-h616-t95_defconfig
@@ -988,4 +1002,4 @@ index 0000000000..8903190023
 +# CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
 +CONFIG_SPL_I2C_SUPPORT=y
 +CONFIG_PHY_REALTEK=y
-+#CONFIG_SUN8I_EMAC=y
++CONFIG_SUN8I_EMAC=y
