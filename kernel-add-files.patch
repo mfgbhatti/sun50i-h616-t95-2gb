@@ -1,0 +1,991 @@
+diff --git a/arch/arm64/boot/dts/sunxi/Makefile b/arch/arm64/boot/dts/sunxi/Makefile
+index d6f2e2a2bf..47f9de04dc 100644
+--- a/arch/arm64/boot/dts/sunxi/Makefile
++++ b/arch/arm64/boot/dts/sunxi/Makefile
+@@ -9,7 +9,7 @@ dtb-$(CONFIG_ARCH_SUN50IW1P1) += sun50iw1p1-fpga.dtb  sun50iw1p1-perf1_v1_0.dtb
+ dtb-$(CONFIG_ARCH_SUN50IW6P1) += sun50iw6p1-soc.dtb
+ 
+ dtb-$(CONFIG_ARCH_SUN50IW8P1) += sun50iw8p1-fpga.dtb sun50iw8p1-soc.dtb
+-dtb-$(CONFIG_ARCH_SUN50IW9P1) += t95-h616-2gb-x.dtb
++dtb-$(CONFIG_ARCH_SUN50IW9P1) += sun50i-h616-t95.dtb
+ dtb-$(CONFIG_ARCH_SUN50IW10P1) += board.dtb
+ dtb-$(CONFIG_ARCH_SUN50IW5T) += sun50iw5t-fpga.dtb
+ 
+diff --git a/arch/arm64/boot/dts/sunxi/sun50i-h616-t95.dts b/arch/arm64/boot/dts/sunxi/sun50i-h616-t95.dts
+new file mode 100644
+index 0000000000..1c85b1e725
+--- /dev/null
++++ b/arch/arm64/boot/dts/sunxi/sun50i-h616-t95.dts
+@@ -0,0 +1,972 @@
++# 0 "arch/arm/dts/sun50i-h616-t95.dts"
++# 0 "<built-in>"
++# 0 "<command-line>"
++# 1 "arch/arm/dts/sun50i-h616-t95.dts"
++
++
++
++
++
++/dts-v1/;
++
++# 1 "arch/arm/dts/sun50i-h616-t95.dtsi" 1
++
++
++
++
++
++# 1 "include/dt-bindings/interrupt-controller/arm-gic.h" 1
++# 9 "include/dt-bindings/interrupt-controller/arm-gic.h"
++# 1 "include/dt-bindings/interrupt-controller/irq.h" 1
++# 10 "include/dt-bindings/interrupt-controller/arm-gic.h" 2
++# 7 "arch/arm/dts/sun50i-h616-t95.dtsi" 2
++# 1 "include/dt-bindings/clock/sun50i-h616-ccu.h" 1
++# 8 "arch/arm/dts/sun50i-h616-t95.dtsi" 2
++# 1 "include/dt-bindings/clock/sun50i-h6-r-ccu.h" 1
++# 9 "arch/arm/dts/sun50i-h616-t95.dtsi" 2
++# 1 "include/dt-bindings/reset/sun50i-h616-ccu.h" 1
++# 10 "arch/arm/dts/sun50i-h616-t95.dtsi" 2
++# 1 "include/dt-bindings/reset/sun50i-h6-r-ccu.h" 1
++# 11 "arch/arm/dts/sun50i-h616-t95.dtsi" 2
++
++/ {
++ interrupt-parent = <&gic>;
++ #address-cells = <2>;
++ #size-cells = <2>;
++
++ cpus {
++  #address-cells = <2>;
++  #size-cells = <0>;
++
++  cpu0: cpu@0 {
++   compatible = "arm,cortex-a53";
++   device_type = "cpu";
++   reg = <0>;
++   enable-method = "psci";
++   clocks = <&ccu 21>;
++  };
++
++  cpu1: cpu@1 {
++   compatible = "arm,cortex-a53";
++   device_type = "cpu";
++   reg = <1>;
++   enable-method = "psci";
++   clocks = <&ccu 21>;
++  };
++
++  cpu2: cpu@2 {
++   compatible = "arm,cortex-a53";
++   device_type = "cpu";
++   reg = <2>;
++   enable-method = "psci";
++   clocks = <&ccu 21>;
++  };
++
++  cpu3: cpu@3 {
++   compatible = "arm,cortex-a53";
++   device_type = "cpu";
++   reg = <3>;
++   enable-method = "psci";
++   clocks = <&ccu 21>;
++  };
++ };
++
++ osc48M: osc48M_clk {
++  #clock-cells = <0>;
++  compatible = "fixed-clock";
++  clock-frequency = <48000000>;
++  clock-output-names = "osc48M";
++ };
++
++ pmu {
++  compatible = "arm,cortex-a53-pmu";
++  interrupts = <0 140 4>,
++        <0 141 4>,
++        <0 142 4>,
++        <0 143 4>;
++  interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
++ };
++
++ psci {
++  compatible = "arm,psci-1.0";
++  method = "smc";
++ };
++
++ timer {
++  compatible = "arm,armv8-timer";
++  arm,no-tick-in-suspend;
++  interrupts = <1 13
++   ((((1 << (4)) - 1) << 8) | 4)>,
++        <1 14
++   ((((1 << (4)) - 1) << 8) | 4)>,
++        <1 11
++   ((((1 << (4)) - 1) << 8) | 4)>,
++        <1 10
++   ((((1 << (4)) - 1) << 8) | 4)>;
++ };
++
++ soc {
++  compatible = "simple-bus";
++  #address-cells = <1>;
++  #size-cells = <1>;
++  ranges = <0x0 0x0 0x0 0x40000000>;
++
++  syscon: syscon@3000000 {
++   compatible = "allwinner,sun50i-h616-system-control";
++   reg = <0x03000000 0x1000>;
++   #address-cells = <1>;
++   #size-cells = <1>;
++   ranges;
++
++   sram_c: sram@28000 {
++    compatible = "mmio-sram";
++    reg = <0x00 0x3000000 0x00 0x100>;
++    #address-cells = <1>;
++    #size-cells = <1>;
++    #ranges = <0 0x00028000 0x30000>;
++   };
++  };
++
++  ccu: clock@3001000 {
++   compatible = "allwinner,sun50i-h616-ccu";
++   reg = <0x03001000 0x1000>;
++   clocks = <&osc48M>, <&rtc 0>, <&rtc 2>;
++   clock-names = "hosc", "losc", "iosc";
++   #clock-cells = <1>;
++   #reset-cells = <1>;
++  };
++
++  watchdog: watchdog@30090a0 {
++   compatible = "allwinner,sun50i-h616-wdt",
++         "allwinner,sun6i-a31-wdt";
++   reg = <0x030090a0 0x20>;
++   interrupts = <0 50 4>;
++   clocks = <&osc48M>;
++   status = "disabled";
++  };
++
++  pio: pinctrl@300b000 {
++   compatible = "allwinner,sun50i-h616-pinctrl";
++   reg = <0x0300b000 0x400>;
++   interrupts = <0 51 4>,
++         <0 52 4>,
++         <0 53 4>,
++         <0 43 4>,
++         <0 54 4>,
++         <0 55 4>,
++         <0 56 4>,
++         <0 57 4>;
++   clocks = <0x1d 0x1e 0x09>;
++   clock-names = "apb", "hosc", "losc";
++   gpio-controller;
++   #gpio-cells = <3>;
++   interrupt-controller;
++   #interrupt-cells = <3>;
++
++   ext_rgmii_pins: rgmii-pins {
++    pins = "PI0", "PI1", "PI2", "PI3", "PI4",
++           "PI5", "PI7", "PI8", "PI9", "PI10",
++           "PI11", "PI12", "PI13", "PI14", "PI15",
++           "PI16";
++    function = "emac0";
++    drive-strength = <40>;
++   };
++
++   i2c0_pins: i2c0-pins {
++    pins = "PI6", "PI7";
++    function = "i2c0";
++   };
++
++   i2c3_ph_pins: i2c3-ph-pins {
++    pins = "PH4", "PH5";
++    function = "i2c3";
++   };
++
++   ir_rx_pin: ir_rx_pin {
++    pins = "PH10";
++    function = "ir_rx";
++   };
++
++   mmc0_pins: mmc0-pins {
++    pins = "PF0", "PF1", "PF2", "PF3",
++           "PF4", "PF5";
++    function = "mmc0";
++    drive-strength = <30>;
++    bias-pull-up;
++   };
++
++   mmc1_pins: mmc1-pins {
++    pins = "PG0", "PG1", "PG2", "PG3",
++           "PG4", "PG5";
++    function = "mmc1";
++    drive-strength = <30>;
++    bias-pull-up;
++   };
++
++   mmc2_pins: mmc2-pins {
++    pins = "PC0", "PC1", "PC5", "PC6",
++           "PC8", "PC9", "PC10", "PC11",
++           "PC13", "PC14", "PC15", "PC16";
++    function = "mmc2";
++    drive-strength = <30>;
++    bias-pull-up;
++   };
++
++   spi0_pins: spi0-pins {
++    pins = "PC3", "PC7";
++    function = "spi0";
++   };
++
++   spi1_pins: spi1-pins {
++    pins = "PH5", "PH9";
++    function = "spi1";
++   };
++
++   spi1_cs_pin: spi1-cs-pin {
++    pins = "PH5";
++    function = "spi1";
++   };
++
++   uart0_ph_pins: uart0-ph-pins {
++    pins = "PH0", "PH1";
++    function = "uart0";
++   };
++
++   uart1_pins: uart1-pins {
++    pins = "PG6", "PG7", "PG8", "PG9";
++    function = "uart1";
++   };
++
++   uart1_rts_cts_pins: uart1-rts-cts-pins {
++    pins = "PG8", "PG9";
++    function = "uart1";
++   };
++  };
++
++  gic: interrupt-controller@03020000 {
++   compatible = "arm,gic-400";
++   reg = <0x03021000 0x1000>,
++         <0x03022000 0x2000>,
++         <0x03024000 0x2000>,
++         <0x03026000 0x2000>;
++   interrupts = <1 9 ((((1 << (4)) - 1) << 8) | 4)>;
++   interrupt-controller;
++   #interrupt-cells = <3>;
++  };
++
++  mmc0: mmc@4020000 {
++   compatible = "allwinner,sun50i-h616-mmc",
++         "allwinner,sun50i-a100-mmc";
++   reg = <0x04020000 0x1000>;
++   clocks = <0x09 0x86 0x8d 0x8e 0x8f>;
++   clock-names = "ahb", "mmc";
++   resets = <&ccu 14>;
++   reset-names = "ahb";
++   interrupts = <0 35 4>;
++   pinctrl-names = "default";
++   pinctrl-0 = <&mmc0_pins>;
++   status = "disabled";
++   cap-sd-highspeed;
++   cap-mmc-highspeed;
++   mmc-ddr-3_3v;
++   mmc-ddr-1_8v;
++   cap-sdio-irq;
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  mmc1: mmc@4021000 {
++   compatible = "allwinner,sun50i-h616-mmc",
++         "allwinner,sun50i-a100-mmc";
++   reg = <0x04021000 0x1000>;
++   clocks = <0x09 0x86 0x93 0x94 0x95>;
++   clock-names = "ahb", "mmc";
++   resets = <&ccu 15>;
++   reset-names = "ahb";
++   interrupts = <0 36 4>;
++   pinctrl-names = "default";
++   pinctrl-0 = <&mmc1_pins>;
++   status = "disabled";
++   cap-sd-highspeed;
++   cap-mmc-highspeed;
++   mmc-ddr-3_3v;
++   mmc-ddr-1_8v;
++   cap-sdio-irq;
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  mmc2: mmc@4022000 {
++   compatible = "allwinner,sun50i-h616-emmc",
++         "allwinner,sun50i-a100-emmc";
++   reg = <0x04022000 0x1000>;
++   clocks = <0x09 0x86 0x87 0x88 0x89>;
++   clock-names = "ahb", "mmc";
++   resets = <&ccu 16>;
++   reset-names = "ahb";
++   interrupts = <0 37 4>;
++   pinctrl-names = "default";
++   pinctrl-0 = <&mmc2_pins>;
++   status = "disabled";
++   cap-sd-highspeed;
++   cap-mmc-highspeed;
++   mmc-ddr-3_3v;
++   mmc-ddr-1_8v;
++   cap-sdio-irq;
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  uart0: serial@5000000 {
++   compatible = "snps,dw-apb-uart";
++   reg = <0x05000000 0x400>;
++   interrupts = <0 0 4>;
++   reg-shift = <2>;
++   reg-io-width = <4>;
++   clocks = <&ccu 66>;
++   resets = <&ccu 17>;
++   status = "disabled";
++  };
++
++  uart1: serial@5000400 {
++   compatible = "snps,dw-apb-uart";
++   reg = <0x05000400 0x400>;
++   interrupts = <0 1 4>;
++   reg-shift = <2>;
++   reg-io-width = <4>;
++   clocks = <&ccu 67>;
++   resets = <&ccu 18>;
++   status = "disabled";
++  };
++
++  uart2: serial@5000800 {
++   compatible = "snps,dw-apb-uart";
++   reg = <0x05000800 0x400>;
++   interrupts = <0 2 4>;
++   reg-shift = <2>;
++   reg-io-width = <4>;
++   clocks = <&ccu 68>;
++   resets = <&ccu 19>;
++   status = "disabled";
++  };
++
++  uart3: serial@5000c00 {
++   compatible = "snps,dw-apb-uart";
++   reg = <0x05000c00 0x400>;
++   interrupts = <0 3 4>;
++   reg-shift = <2>;
++   reg-io-width = <4>;
++   clocks = <&ccu 69>;
++   resets = <&ccu 20>;
++   status = "disabled";
++  };
++
++  uart4: serial@5001000 {
++   compatible = "snps,dw-apb-uart";
++   reg = <0x05001000 0x400>;
++   interrupts = <0 4 4>;
++   reg-shift = <2>;
++   reg-io-width = <4>;
++   clocks = <&ccu 70>;
++   resets = <&ccu 21>;
++   status = "disabled";
++  };
++
++  uart5: serial@5001400 {
++   compatible = "snps,dw-apb-uart";
++   reg = <0x05001400 0x400>;
++   interrupts = <0 5 4>;
++   reg-shift = <2>;
++   reg-io-width = <4>;
++   clocks = <&ccu 71>;
++   resets = <&ccu 22>;
++   status = "disabled";
++  };
++
++  i2c0: i2c@5002000 {
++   compatible = "allwinner,sun50i-h616-i2c",
++         "allwinner,sun6i-a31-i2c";
++   reg = <0x05002000 0x400>;
++   interrupts = <0 6 4>;
++   clocks = <&ccu 59>;
++   resets = <&ccu 13>;
++   pinctrl-names = "default";
++   pinctrl-0 = <&i2c0_pins>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  i2c1: i2c@5002400 {
++   compatible = "allwinner,sun50i-h616-i2c",
++         "allwinner,sun6i-a31-i2c";
++   reg = <0x05002400 0x400>;
++   interrupts = <0 7 4>;
++   clocks = <&ccu 62>;
++   resets = <&ccu 62>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  i2c2: i2c@5002800 {
++   compatible = "allwinner,sun50i-h616-i2c",
++         "allwinner,sun6i-a31-i2c";
++   reg = <0x05002800 0x400>;
++   interrupts = <0 8 4>;
++   clocks = <&ccu 65>;
++   resets = <&ccu 16>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  i2c3: i2c@5002c00 {
++   compatible = "allwinner,sun50i-h616-i2c",
++         "allwinner,sun6i-a31-i2c";
++   reg = <0x05002c00 0x400>;
++   interrupts = <0 9 4>;
++   clocks = <&ccu 68>;
++   resets = <&ccu 19>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  i2c4: i2c@5003000 {
++   compatible = "allwinner,sun50i-h616-i2c",
++         "allwinner,sun6i-a31-i2c";
++   reg = <0x05003000 0x400>;
++   interrupts = <0 10 4>;
++   clocks = <&ccu 71>;
++   resets = <&ccu 22>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++  spi0: spi@5010000 {
++   compatible = "allwinner,sun50i-h616-spi",
++         "allwinner,sun8i-h3-spi";
++   reg = <0x05010000 0x1000>;
++   interrupts = <0 12 4>;
++   clocks = <0x02 0x7d>;
++   clock-names = "ahb", "mod";
++   resets = <&ccu 28>;
++   pinctrl-names = "default";
++   pinctrl-0 = <&spi0_pins>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  spi1: spi@5011000 {
++   compatible = "allwinner,sun50i-h616-spi",
++         "allwinner,sun8i-h3-spi";
++   reg = <0x05011000 0x1000>;
++   interrupts = <0 13 4>;
++   clocks = <0x02 0x81>;
++   clock-names = "ahb", "mod";
++   resets = <&ccu 29>;
++   pinctrl-names = "default";
++   pinctrl-0 = <&spi1_pins>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++
++  emac0: ethernet@5020000 {
++   compatible = "allwinner,sun50i-h616-emac",
++         "allwinner,sun50i-a64-emac";
++   syscon = <&syscon>;
++   reg = <0x05020000 0x10000>;
++   interrupts = <0 14 4>;
++   interrupt-names = "macirq";
++   resets = <&ccu 30>;
++   reset-names = "stmmaceth";
++   clocks = <0xcb 0xcc>;
++   clock-names = "stmmaceth";
++   status = "disabled";
++
++   mdio0: mdio {
++    compatible = "snps,dwmac-mdio";
++    #address-cells = <1>;
++    #size-cells = <0>;
++   };
++  };
++
++  emac1: ethernet@5030000 {
++   compatible = "allwinner,sun50i-h616-emac";
++   syscon = <&syscon 1>;
++   reg = <0x05030000 0x10000>;
++   interrupts = <0 15 4>;
++   interrupt-names = "macirq";
++   resets = <&ccu 31>;
++   reset-names = "stmmaceth";
++   clocks = <0xcf>;
++   clock-names = "stmmaceth";
++   status = "disabled";
++
++   mdio1: mdio {
++    compatible = "snps,dwmac-mdio";
++    #address-cells = <1>;
++    #size-cells = <0>;
++   };
++  };
++
++  usbotg: usb@5100000 {
++   compatible = "allwinner,sun50i-h616-musb",
++         "allwinner,sun8i-h3-musb";
++   reg = <0x05100000 0x1000>;
++   clocks = <0x4d 0x4e>;
++   resets = <&ccu 50>;
++   interrupts = <0 25 4>;
++   interrupt-names = "mc";
++   phys = <&usbphy 0>;
++   phy-names = "usb";
++   extcon = <&usbphy 0>;
++   status = "disabled";
++  };
++
++  usbphy: phy@5100400 {
++   compatible = "allwinner,sun50i-h616-usb-phy";
++   reg = <0x05100400 0x24>,
++         <0x05101800 0x14>,
++         <0x05200800 0x14>,
++         <0x05310800 0x14>,
++         <0x05311800 0x14>;
++   reg-names = "phy_ctrl",
++        "pmu0",
++        "pmu1",
++        "pmu2",
++        "pmu3";
++   clocks = <&ccu 97>,
++     <&ccu 99>,
++     <&ccu 101>,
++     <&ccu 103>;
++   clock-names = "usb0_phy",
++          "usb1_phy",
++          "usb2_phy",
++          "usb3_phy";
++   resets = <&ccu 38>,
++     <&ccu 39>,
++     <&ccu 40>,
++     <&ccu 41>;
++   reset-names = "usb0_reset",
++          "usb1_reset",
++          "usb2_reset",
++          "usb3_reset";
++   status = "disabled";
++   #phy-cells = <1>;
++  };
++
++  ehci0: usb@5101000 {
++   compatible = "allwinner,sun50i-h616-ehci",
++         "generic-ehci";
++   reg = <0x05101000 0x100>;
++   interrupts = <0 26 4>;
++   clocks = <0x4d 0x4f>;
++   resets = <&ccu 46>;
++   phys = <&usbphy 0>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  ohci0: usb@5101400 {
++   compatible = "allwinner,sun50i-h616-ohci",
++         "generic-ohci";
++   reg = <0x05101400 0x100>;
++   interrupts = <0 27 4>;
++   clocks = <0x4d 0x50 0x51 0x52 0x09 0x1e>;
++   resets = <&ccu 42>;
++   phys = <&usbphy 0>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  ehci1: usb@5200000 {
++   compatible = "allwinner,sun50i-h616-ehci",
++         "generic-ehci";
++   reg = <0x05200000 0x100>;
++   interrupts = <0 28 4>;
++   clocks = <0x54 0x55>;
++   resets = <&ccu 47>;
++   phys = <&usbphy 1>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  ohci1: usb@5200400 {
++   compatible = "allwinner,sun50i-h616-ohci",
++         "generic-ohci";
++   reg = <0x05200400 0x100>;
++   interrupts = <0 29 4>;
++   clocks = <0x54 0x56 0x57 0x52 0x09 0x1e>;
++   resets = <&ccu 43>;
++   phys = <&usbphy 1>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  ehci2: usb@5310000 {
++   compatible = "allwinner,sun50i-h616-ehci",
++         "generic-ehci";
++   reg = <0x05310000 0x100>;
++   interrupts = <0 30 4>;
++   clocks = <0x58 0x59>;
++   resets = <&ccu 44>;
++   phys = <&usbphy 2>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  ohci2: usb@5310400 {
++   compatible = "allwinner,sun50i-h616-ohci",
++         "generic-ohci";
++   reg = <0x05310400 0x100>;
++   interrupts = <0 31 4>;
++   clocks = <0x58 0x5a 0x5b 0x52 0x09 0x1e>;
++   resets = <&ccu 44>;
++   phys = <&usbphy 2>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  ehci3: usb@5311000 {
++   compatible = "allwinner,sun50i-h616-ehci",
++         "generic-ehci";
++   reg = <0x05311000 0x100>;
++   interrupts = <0 32 4>;
++   clocks = <0x5c 0x5d>;
++   resets = <&ccu 45>;
++   phys = <&usbphy 3>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  ohci3: usb@5311400 {
++   compatible = "allwinner,sun50i-h616-ohci",
++         "generic-ohci";
++   reg = <0x05311400 0x100>;
++   interrupts = <0 33 4>;
++   clocks = <0x5c 0x5e 0x5f 0x52 0x09 0x1e>;
++   resets = <&ccu 45>;
++   phys = <&usbphy 3>;
++   phy-names = "usb";
++   status = "disabled";
++  };
++
++  rtc: rtc@7000000 {
++   compatible = "allwinner,sun50i-h616-rtc",
++         "allwinner,sun50i-h6-rtc";
++   reg = <0x07000000 0x200>;
++   interrupts = <0 104 4>;
++   clock-output-names = "osc32k", "osc32k-out", "iosc";
++   #clock-cells = <1>;
++  };
++
++  r_ccu: clock@7010000 {
++   compatible = "allwinner,sun50i-h616-r-ccu";
++   reg = <0x07010000 0x400>;
++   clocks = <0x1e 0x20 0x09 0x02>;
++   clock-names = "hosc", "losc", "iosc", "pll-periph";
++   #clock-cells = <1>;
++   #reset-cells = <1>;
++  };
++
++  r_pio: pinctrl@7022000 {
++   compatible = "allwinner,sun50i-h616-r-pinctrl";
++   reg = <0x07022000 0x400>;
++   interrupts = <0 43 4>;
++   clocks = <0x1c>;
++   clock-names = "apb", "hosc", "losc";
++   gpio-controller;
++   #gpio-cells = <3>;
++   interrupt-controller;
++   #interrupt-cells = <3>;
++
++   r_i2c_pins: r-i2c-pins {
++    pins = "PL0", "PL1";
++    function = "s_i2c";
++   };
++
++   r_rsb_pins: r-rsb-pins {
++    pins = "PL0", "PL1";
++    function = "s_rsb";
++   };
++  };
++
++  ir: ir@7040000 {
++    compatible = "allwinner,sun50i-h616-ir",
++          "allwinner,sun6i-a31-ir";
++    reg = <0x07040000 0x400>;
++    interrupts = <0 106 4>;
++    clocks = <0x09 0x25>;
++    clock-names = "apb", "ir";
++    resets = <&r_ccu 5>;
++    pinctrl-names = "default";
++    pinctrl-0 = <&ir_rx_pin>;
++    status = "disabled";
++  };
++
++  r_i2c: i2c@7081400 {
++   compatible = "allwinner,sun50i-h616-i2c",
++         "allwinner,sun6i-a31-i2c";
++   reg = <0x07081400 0x400>;
++   interrupts = <0 105 4>;
++   clocks = <0x4a>;
++   resets = <&r_ccu 4>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++  r_rsb: rsb@7083000 {
++   compatible = "allwinner,sun50i-h616-rsb",
++         "allwinner,sun8i-a23-rsb";
++   reg = <0x07083000 0x400>;
++   interrupts = <0 109 4>;
++   clocks = <&r_ccu 13>;
++   clock-frequency = <3000000>;
++   resets = <&r_ccu 7>;
++   pinctrl-names = "default";
++   pinctrl-0 = <&r_rsb_pins>;
++   status = "disabled";
++   #address-cells = <1>;
++   #size-cells = <0>;
++  };
++ };
++};
++# 9 "arch/arm/dts/sun50i-h616-t95.dts" 2
++
++# 1 "include/dt-bindings/gpio/gpio.h" 1
++# 11 "arch/arm/dts/sun50i-h616-t95.dts" 2
++
++# 1 "include/dt-bindings/leds/common.h" 1
++# 13 "arch/arm/dts/sun50i-h616-t95.dts" 2
++/ {
++ model = "H616 T95";
++ compatible = "allwinner,sun50i-h616";
++
++ aliases {
++  ethernet0 = &emac0;
++  serial0 = &uart0;
++ };
++
++ chosen {
++  stdout-path = "serial0:05000000";
++ };
++
++ leds {
++  compatible = "gpio-leds";
++
++  led-0 {
++   function = "power";
++   color = <1>;
++   gpios = <&pio 7 14 0>;
++   default-state = "on";
++  };
++
++  led-1 {
++   function = "status";
++   color = <2>;
++   gpios = <&pio 7 15 0>;
++  };
++ };
++
++ reg_vcc5v: vcc5v {
++
++  compatible = "regulator-fixed";
++  regulator-name = "vcc-5v";
++  regulator-min-microvolt = <5000000>;
++  regulator-max-microvolt = <5000000>;
++  regulator-always-on;
++ };
++
++ reg_usb1_vbus: usb1-vbus {
++  compatible = "regulator-fixed";
++  regulator-name = "usb1-vbus";
++  regulator-min-microvolt = <5000000>;
++  regulator-max-microvolt = <5000000>;
++  vin-supply = <&reg_vcc5v>;
++  enable-active-high;
++  gpio = <&pio 7 8 0>;
++  status = "okay";
++ };
++};
++
++&ehci0 {
++ status = "okay";
++};
++
++&ehci1 {
++ status = "okay";
++};
++
++
++&emac0 {
++ pinctrl-names = "default";
++ pinctrl-0 = <&ext_rgmii_pins>;
++ phy-mode = "rgmii";
++ phy-handle = <&ext_rgmii_phy>;
++ phy-supply = <&reg_dcdce>;
++ allwinner,rx-delay-ps = <3100>;
++ allwinner,tx-delay-ps = <700>;
++ status = "okay";
++};
++
++&mdio0 {
++ ext_rgmii_phy: ethernet-phy@1 {
++  compatible = "ethernet-phy-ieee802.3-c22";
++  reg = <1>;
++ };
++};
++
++&mmc0 {
++ vmmc-supply = <&reg_dcdce>;
++ cd-gpios = <&pio 8 10 1>;
++ bus-width = <4>;
++ status = "okay";
++};
++
++&ohci0 {
++ status = "okay";
++};
++
++&ohci1 {
++ status = "okay";
++};
++
++&r_rsb {
++ status = "okay";
++
++ axp806: pmic@36 {
++  compatible = "x-powers,axp305", "x-powers,axp805",
++        "x-powers,axp806";
++  interrupt-controller;
++  #interrupt-cells = <1>;
++  reg = <0x36>;
++
++  x-powers,self-working-mode;
++  vina-supply = <&reg_vcc5v>;
++  vinb-supply = <&reg_vcc5v>;
++  vinc-supply = <&reg_vcc5v>;
++  vind-supply = <&reg_vcc5v>;
++  vine-supply = <&reg_vcc5v>;
++  aldoin-supply = <&reg_vcc5v>;
++  bldoin-supply = <&reg_vcc5v>;
++  cldoin-supply = <&reg_vcc5v>;
++
++  regulators {
++   reg_aldo1: aldo1 {
++    regulator-always-on;
++    regulator-min-microvolt = <3300000>;
++    regulator-max-microvolt = <3300000>;
++    regulator-name = "vcc-sys";
++   };
++
++   reg_aldo2: aldo2 {
++    regulator-always-on;
++    regulator-min-microvolt = <3300000>;
++    regulator-max-microvolt = <3300000>;
++    regulator-name = "vcc3v3-ext";
++   };
++
++   reg_aldo3: aldo3 {
++    regulator-always-on;
++    regulator-min-microvolt = <3300000>;
++    regulator-max-microvolt = <3300000>;
++    regulator-name = "vcc3v3-ext2";
++   };
++
++   reg_bldo1: bldo1 {
++    regulator-always-on;
++    regulator-min-microvolt = <1800000>;
++    regulator-max-microvolt = <1800000>;
++    regulator-name = "vcc1v8";
++   };
++
++   bldo2 {
++
++   };
++
++   bldo3 {
++
++   };
++
++   bldo4 {
++
++   };
++
++   cldo1 {
++
++   };
++
++   cldo2 {
++
++   };
++
++   cldo3 {
++
++   };
++
++   reg_dcdca: dcdca {
++    regulator-always-on;
++    regulator-min-microvolt = <600000>;
++    regulator-max-microvolt = <1520000>;
++    regulator-name = "vdd-cpu";
++   };
++
++   reg_dcdcc: dcdcc {
++    regulator-always-on;
++    regulator-min-microvolt = <600000>;
++    regulator-max-microvolt = <1520000>;
++    regulator-name = "vdd-gpu-sys";
++   };
++
++   reg_dcdcd: dcdcd {
++    regulator-always-on;
++    regulator-min-microvolt = <600000>;
++    regulator-max-microvolt = <3300000>;
++    regulator-name = "vdd-dram";
++   };
++
++   reg_dcdce: dcdce {
++    regulator-boot-on;
++    regulator-min-microvolt = <1100000>;
++    regulator-max-microvolt = <3400000>;
++    regulator-name = "vcc-eth-mmc";
++   };
++
++   sw {
++
++   };
++  };
++ };
++};
++
++&spi0 {
++ status = "okay";
++
++ flash@0 {
++  #address-cells = <1>;
++  #size-cells = <1>;
++  compatible = "jedec,spi-nor";
++  reg = <0>;
++  spi-max-frequency = <40000000>;
++ };
++};
++
++&uart0 {
++ pinctrl-names = "default";
++ pinctrl-0 = <&uart0_ph_pins>;
++ status = "okay";
++};
++
++&usbotg {
++ dr_mode = "peripheral";
++ status = "okay";
++};
++
++&usbphy {
++ usb1_vbus-supply = <&reg_usb1_vbus>;
++ status = "okay";
++};
