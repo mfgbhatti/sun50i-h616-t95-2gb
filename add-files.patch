@@ -14,10 +14,10 @@ index 9fb38682e6..42ee22a94f 100644
  	sun50i-a64-bananapi-m64.dtb \
 diff --git a/arch/arm/dts/sun50i-h616-t95.dts b/arch/arm/dts/sun50i-h616-t95.dts
 new file mode 100644
-index 0000000000..129fd1687c
+index 0000000000..6ea04ccfb3
 --- /dev/null
 +++ b/arch/arm/dts/sun50i-h616-t95.dts
-@@ -0,0 +1,241 @@
+@@ -0,0 +1,240 @@
 +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
 +/*
 + * Copyright (C) 2020 Arm Ltd.
@@ -30,7 +30,6 @@ index 0000000000..129fd1687c
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/interrupt-controller/arm-gic.h>
 +#include <dt-bindings/leds/common.h>
-+
 +/ {
 +	model = "H616 T95";
 +	compatible = "allwinner,sun50i-h616";
@@ -261,10 +260,10 @@ index 0000000000..129fd1687c
 +};
 diff --git a/arch/arm/dts/sun50i-h616-t95.dtsi b/arch/arm/dts/sun50i-h616-t95.dtsi
 new file mode 100644
-index 0000000000..8180077180
+index 0000000000..f97bdd6dd9
 --- /dev/null
 +++ b/arch/arm/dts/sun50i-h616-t95.dtsi
-@@ -0,0 +1,703 @@
+@@ -0,0 +1,717 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +// Copyright (C) 2020 Arm Ltd.
 +// based on the H6 dtsi, which is:
@@ -485,7 +484,7 @@ index 0000000000..8180077180
 +			};
 +
 +			uart1_rts_cts_pins: uart1-rts-cts-pins {
-+				pins = "PG8", "PG9";t95
++				pins = "PG8", "PG9";
 +				function = "uart1";
 +			};
 +		};
@@ -650,7 +649,7 @@ index 0000000000..8180077180
 +			reg = <0x05002400 0x400>;
 +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&ccu CLK_MMC2>;
-+			resets = <&ccu RST_MMC2>;
++			resets = <&ccu CLK_MMC2>;
 +			status = "disabled";
 +			#address-cells = <1>;
 +			#size-cells = <0>;
@@ -984,7 +983,7 @@ index 0000000000..8180077180
 +};
 diff --git a/configs/sun50i-h616-t95_defconfig b/configs/sun50i-h616-t95_defconfig
 new file mode 100644
-index 0000000000..8903190023
+index 0000000000..a2322a046f
 --- /dev/null
 +++ b/configs/sun50i-h616-t95_defconfig
 @@ -0,0 +1,15 @@
