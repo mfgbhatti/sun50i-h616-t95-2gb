@@ -3,7 +3,7 @@
 
 [armbian]
 repo = "https://github.com/armbian/build"
-ref = "v26.8.0-trunk.343"      # tag; U-Boot v2026.07-rc4 line at this tag
+ref = "v26.11.0-trunk.91"      # tag; U-Boot v2026.07 line at this tag
 board = "t95-2gb"
 branch = "current"
 release = "trixie"

@@ -166,7 +166,7 @@ jobs:
             xsltproc default-jre libxml-parser-perl libjson-perl libncurses-dev \
             libparse-yapp-perl python3 python3-pyelftools u-boot-tools swig \
             zstd file rsync cpio texinfo bison flex libssl-dev autoconf automake \
-            libtool pkg-config libc6-dev
+            libtool pkg-config libc6-dev g++ xfonts-utils rdfind
       - name: Fetch pinned LibreELEC
         run: |
           pin="$(uv run t95 pin libreelec.ref)"
