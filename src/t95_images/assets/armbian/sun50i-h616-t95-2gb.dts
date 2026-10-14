@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 /*
- * T95 H616 2GB TV box: Armbian variant. Adds HDMI video on top of the
- * shared board file, using the H616 display pipeline carried by Armbian's
- * sunxi kernel patches. No wired Ethernet: the AC200 EPHY needs driver
- * patches Armbian does not carry for H616.
+ * T95 H616 2GB TV box: Armbian variant. Adds HDMI video and the wired
+ * 10/100 Ethernet on top of the shared board file, using the H616 display
+ * pipeline and the AC300 internal-EPHY support carried by Armbian's sunxi
+ * kernel patches (emac1, rmii_pins, pwm5, the h616-internal-emac variant of
+ * dwmac-sun8i and the ac300-phy driver). The EPHY wiring follows
+ * sun50i-h616-tanix-tx6s-axp313.dts from the same Armbian tree; the vendor
+ * dts confirms the pieces: gmac1 on PA0-PA9 in RMII mode, delays 7/0x1f
+ * (700/3100 ps), and the AC200/AC300 die with tv_pwm_ch = 5 (PA12).
  */
 
 /dts-v1/;
@@ -14,6 +18,19 @@
 / {
 	model = "T95 H616 2GB TV box";
 	compatible = "t95,t95-2gb", "allwinner,sun50i-h616";
+
+	aliases {
+		ethernet0 = &emac1;
+	};
+
+	ac300_pwm_clk: ac300-clk {
+		compatible = "pwm-clock";
+		#clock-cells = <0>;
+		/* 500ns period -> 2MHz */
+		pwms = <&pwm 5 500 0>;
+		clock-frequency = <2000000>;
+		status = "okay";
+	};
 
 	connector {
 		compatible = "hdmi-connector";
@@ -31,6 +48,44 @@
 	status = "okay";
 };
 
+&emac1 {
+	compatible = "allwinner,sun50i-h616-internal-emac";
+	pinctrl-names = "default";
+	pinctrl-0 = <&rmii_pins>;
+	phy-mode = "rmii";
+	phy-handle = <&ac300_ephy>;
+	phy-supply = <&reg_dldo1>;
+	allwinner,rx-delay-ps = <3100>;
+	allwinner,tx-delay-ps = <700>;
+	status = "okay";
+
+	mdio-mux {
+		compatible = "allwinner,sun8i-h3-mdio-mux";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		mdio-parent-bus = <&mdio1>;
+
+		internal_mdio: mdio@1 {
+			compatible = "allwinner,sun8i-h3-mdio-internal";
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			ac300_ephy: ethernet-phy@0 {
+				compatible = "ethernet-phy-id0044.1400",
+					     "allwinner,sun50i-h618-ac300-ephy",
+					     "ethernet-phy-ieee802.3-c22";
+				reg = <0>;
+				clocks = <&ccu CLK_EMAC_25M>, <&ac300_pwm_clk>;
+				clock-names = "ephy", "pwm";
+				nvmem-cells = <&ephy_calibration>;
+				nvmem-cell-names = "calibration";
+				status = "okay";
+			};
+		};
+	};
+};
+
 &hdmi {
 	hvcc-supply = <&reg_vcc3v3>;
 	status = "okay";
@@ -39,5 +94,26 @@
 &hdmi_out {
 	hdmi_out_con: endpoint {
 		remote-endpoint = <&hdmi_con_in>;
+	};
+};
+
+&mdio1 {
+	compatible = "snps,dwmac-mdio";
+};
+
+&pwm {
+	status = "okay";
+};
+
+&pwm5 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm5_pin>;
+	clk_bypass_output = <0x1>;
+	status = "okay";
+};
+
+&sid {
+	ephy_calibration: ephy-calibration@2c {
+		reg = <0x2c 0x2>;
 	};
 };
