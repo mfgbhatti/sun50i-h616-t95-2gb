@@ -1,0 +1,21 @@
+[project]
+name = "t95-images"
+version = "0.1.0"
+description = "Build Armbian and LibreELEC images for the T95 2GB (Allwinner H616) TV box"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+t95 = "t95_images.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: needs real Armbian/LibreELEC checkouts (T95_ARMBIAN_DIR, T95_LIBREELEC_DIR)"]

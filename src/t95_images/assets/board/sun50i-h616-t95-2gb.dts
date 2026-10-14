@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * T95 H616 2GB TV box: base board file. Builds on a plain mainline kernel
+ * and on U-Boot. No display or wired-Ethernet nodes (not in mainline).
+ */
+
+/dts-v1/;
+
+#include "sun50i-h616.dtsi"
+#include "sun50i-h616-t95-2gb.dtsi"
+
+/ {
+	model = "T95 H616 2GB TV box";
+	compatible = "t95,t95-2gb", "allwinner,sun50i-h616";
+};

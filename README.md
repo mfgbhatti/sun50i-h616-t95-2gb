@@ -1,31 +1,50 @@
-## Allwinner H616 quad-core Arm Cortex-A53
--  Mali G31 MP2 GPU with support for OpenGL ES 3.2 and Vulkan
-- System Memory – 2GB/4GB SDRAM
-- Storage – 8GB/32GB/64GB eMMC flash, MicroSD card slot
-- Video Output – HDMI 2.0a up to 4K @ 60 Hz
-- Video Codecs
-  - VP9-10 Profile-2 up to 6K @ 30fps
-  - H.265 HEVC MP-10@L5.1 up to 6K @ 30fps
-  - H.264 AVC HP@L5.1 up to 4Kx2K @ 30fps
-  - H.264 MVC up to 1080p60
-  - MPEG-4 ASP @ L5 up to 1080p60 (ISO-14496)
-  - WMV/VC-1 SP/MP/AP up to 1080p60
-  - AVS-P16(AVS+) /AVS-P2 JiZhun Profile up to 1080p60
-  - MPEG-2 MP/HL up to 1080p60 (ISO-13818)
-  - MPEG-1 MP/HL up to 1080p60 (ISO-11172)
-  - RealVideo 8/9/10 up to 1080p60
-  - WebM up to VGA
-- Audio – S/PDIF output, digital audio via HDMI
-- Connectivity
-  - 10/100M Ethernet
-- 2GB RAM models contain 2.4 GHz WiFi
-- 4GB RAM models contain Dual-band WiFi & Bluetooth 4.0
-- USB – 2x USB 2.0 ports
-- Misc – Power LED
-- Power Supply – DC 5V/2A
+# T95 2GB (Allwinner H616) image builds
 
-## The Origin of Files
-- Device tree file and kernel config are extacted from running tvbox.
-- bl31.bin is generated bu using [arm-trusted-firmware](https://github.com/apritzel/arm-trusted-firmware.git).
-- fex files are extracted from firmware update image file(x27.img released
-  21-07-2021).
+Builds **Armbian** and **LibreELEC** images, plus standalone mainline U-Boot
+bootloaders, for the T95 2GB H616 TV box. Everything uses mainline Linux and
+mainline U-Boot. The vendor BSP files are kept only as reference in
+`reference/vendor/`.
+
+This is an overlay repo: it holds the board device tree, the U-Boot defconfig and
+the build glue. CI clones pinned upstream Armbian and LibreELEC and stages the
+board files into them.
+
+## Layout
+
+| Path | Purpose |
+|---|---|
+| `src/t95_images/assets/` | board dts/dtsi (shared), per-image dts variants, U-Boot defconfig, Armbian board file |
+| `src/t95_images/versions.toml` | pinned upstream versions (Armbian, LibreELEC, U-Boot, TF-A) |
+| `src/t95_images/` | `t95` CLI: staging, patch generation, naming, release notes |
+| `.github/workflows/build.yml` | CI: test, bootloader, armbian, libreelec, release |
+| `reference/vendor/` | original vendor files and old patches (reference only) |
+| `specs/` | design spec and its known limits |
+
+## Releases
+
+Version = `version` in `pyproject.toml`. To release:
+
+1. Bump `version` in `pyproject.toml` (and pins in `versions.toml` if needed), `uv lock`.
+2. Commit, then `git tag v<version> && git push --tags`.
+
+The workflow runs **only on `v*` tags and manually** (Actions tab -> build ->
+Run workflow). A tag must equal `v<version>`. Release assets: Armbian image,
+LibreELEC image (both with `.sha256`), and two bootloaders (`egon`, default;
+`toc0`, signed with a throwaway key, for units that reject the default).
+
+## Development
+
+```sh
+uv sync
+uv run pytest                  # unit tests
+uv run t95 stage armbian PATH  # stage into a checkout
+uv run t95 patches out/        # export the independent patches
+```
+
+Integration tests run against real checkouts when `T95_ARMBIAN_DIR`,
+`T95_LIBREELEC_DIR`, `T95_UBOOT_DIRS`, `T95_LINUX_DIRS` are set.
+
+## Status
+
+Not yet booted on hardware. DRAM parameters, PMIC variant and boot-header type
+are derived from the vendor files; see the spec for known risks.

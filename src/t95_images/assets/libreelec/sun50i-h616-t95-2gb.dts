@@ -1,0 +1,101 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * T95 H616 2GB TV box: LibreELEC variant. Adds HDMI display and the
+ * AC200-EPHY wired Ethernet on top of the shared board file. Needs the
+ * H616 display/EMAC1/AC200 nodes carried by LibreELEC's kernel patches;
+ * wiring mirrors the X96 Mate board (vendor gmac1 delays 7/0x1f = 700/3100 ps).
+ */
+
+/dts-v1/;
+
+#include "sun50i-h616.dtsi"
+#include "sun50i-h616-t95-2gb.dtsi"
+
+/ {
+	model = "T95 H616 2GB TV box";
+	compatible = "t95,t95-2gb", "allwinner,sun50i-h616";
+
+	aliases {
+		ethernet0 = &emac1;
+	};
+
+	connector {
+		compatible = "hdmi-connector";
+		type = "a";
+
+		port {
+			hdmi_con_in: endpoint {
+				remote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+};
+
+&ac200 {
+	ac-ldoin-supply = <&reg_dldo1>;
+	ephy-vcc-supply = <&reg_dldo1>;
+	rtc-vcc-supply = <&reg_dldo1>;
+	tv-vcc-supply = <&reg_dldo1>;
+	status = "okay";
+};
+
+&ac200_ephy_ctl {
+	phy-mode = "rmii";
+	x-powers,phy-address = <1>;
+	status = "okay";
+};
+
+&ac200_pwm_clk {
+	status = "okay";
+};
+
+&ac300_ephy_package {
+	vcc-supply = <&reg_dldo1>;
+};
+
+&de {
+	status = "okay";
+};
+
+&mdio1 {
+	rmii_phy: ethernet-phy@1 {
+		compatible = "ethernet-phy-id0044.1400",
+			     "ethernet-phy-ieee802.3-c22";
+		reg = <1>;
+		clocks = <&ac200_ephy_ctl>;
+		resets = <&ac200_ephy_ctl>;
+		reset-names = "phy";
+	};
+};
+
+&emac1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rmii_pins>;
+	phy-mode = "rmii";
+	phy-handle = <&rmii_phy>;
+	phy-supply = <&reg_dldo1>;
+	allwinner,rx-delay-ps = <3100>;
+	allwinner,tx-delay-ps = <700>;
+	status = "okay";
+};
+
+&hdmi {
+	hvcc-supply = <&reg_vcc3v3>;
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		remote-endpoint = <&hdmi_con_in>;
+	};
+};
+
+&hdmi_sound {
+	status = "okay";
+};
+
+&i2c3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c3_pa_pins>;
+	status = "okay";
+};

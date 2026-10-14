@@ -1,0 +1,23 @@
+# Pinned upstream versions. Bumping a pin is a one-line change here; CI and the
+# staging step read this file, nothing else hard-codes a version.
+
+[armbian]
+repo = "https://github.com/armbian/build"
+ref = "v26.8.0-trunk.343"      # tag; U-Boot v2026.07-rc4 line at this tag
+board = "t95-2gb"
+branch = "current"
+release = "trixie"
+kernel_major_minor = "6.18"    # must match patch/kernel/archive/sunxi-<x> at the tag
+
+[libreelec]
+repo = "https://github.com/LibreELEC/LibreELEC.tv"
+ref = "273ca84d93e9d5e2c988943752c47ae94b017587"   # master; 12.2.1 has no H616 device
+kernel = "7.2.9"               # informational, set by the pinned commit
+uboot = "2026.10"              # informational, set by the pinned commit
+tfa = "2.15.0"                 # informational, set by the pinned commit
+
+[bootloader]
+uboot_repo = "https://github.com/u-boot/u-boot"
+uboot_ref = "v2026.10"
+tfa_repo = "https://github.com/ARM-software/arm-trusted-firmware"
+tfa_ref = "lts-v2.12.9"

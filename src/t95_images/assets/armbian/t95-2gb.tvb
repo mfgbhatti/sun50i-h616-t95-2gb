@@ -1,0 +1,13 @@
+# Allwinner H616 TV box (T95, 2GB DDR3, eMMC), mainline kernel and U-Boot
+BOARD_NAME="T95 H616 2GB"
+BOARD_VENDOR="allwinner"
+BOARDFAMILY="sun50iw9"
+BOARD_MAINTAINER=""
+INTRODUCED="2021"
+BOOTCONFIG="t95_2gb_defconfig"
+BOOT_FDT_FILE="allwinner/sun50i-h616-t95-2gb.dtb"
+BOOT_LOGO="desktop"
+KERNEL_TARGET="current"
+KERNEL_TEST_TARGET="current"
+FORCE_BOOTSCRIPT_UPDATE="yes"
+OVERLAY_PREFIX="sun50i-h616"

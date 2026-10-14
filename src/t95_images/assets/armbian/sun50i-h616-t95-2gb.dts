@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * T95 H616 2GB TV box: Armbian variant. Adds HDMI video on top of the
+ * shared board file, using the H616 display pipeline carried by Armbian's
+ * sunxi kernel patches. No wired Ethernet: the AC200 EPHY needs driver
+ * patches Armbian does not carry for H616.
+ */
+
+/dts-v1/;
+
+#include "sun50i-h616.dtsi"
+#include "sun50i-h616-t95-2gb.dtsi"
+
+/ {
+	model = "T95 H616 2GB TV box";
+	compatible = "t95,t95-2gb", "allwinner,sun50i-h616";
+
+	connector {
+		compatible = "hdmi-connector";
+		type = "a";
+
+		port {
+			hdmi_con_in: endpoint {
+				remote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+};
+
+&de {
+	status = "okay";
+};
+
+&hdmi {
+	hvcc-supply = <&reg_vcc3v3>;
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		remote-endpoint = <&hdmi_con_in>;
+	};
+};
