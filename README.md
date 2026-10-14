@@ -18,7 +18,6 @@ board files into them.
 | `src/t95_images/` | `t95` CLI: staging, patch generation, naming, release notes |
 | `.github/workflows/build.yml` | CI: test, bootloader, armbian, libreelec, release |
 | `reference/vendor/` | original vendor files and old patches (reference only) |
-| `specs/` | design spec and its known limits |
 
 ## Releases
 
@@ -47,4 +46,4 @@ Integration tests run against real checkouts when `T95_ARMBIAN_DIR`,
 ## Status
 
 Not yet booted on hardware. DRAM parameters, PMIC variant and boot-header type
-are derived from the vendor files; see the spec for known risks.
+are derived from the vendor files.
