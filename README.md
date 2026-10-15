@@ -48,7 +48,7 @@ Known limits and things to check on the board:
 |---|---|
 | `src/t95_images/assets/` | shared board dts/dtsi, per-image dts variants, U-Boot defconfig, Armbian board file |
 | `src/t95_images/versions.toml` | pinned upstream versions (Armbian, LibreELEC, U-Boot, TF-A) |
-| `src/t95_images/` | `t95` CLI: staging, patch generation, naming, release notes |
+| `src/t95_images/` | `t95` CLI: staging, patch generation, naming, release notes (see [docs/cli.md](docs/cli.md)) |
 | `.github/workflows/build.yml` | CI: test, bootloader, armbian, libreelec, release |
 | `reference/vendor/` | original vendor files and old patches (reference only) |
 
@@ -69,6 +69,8 @@ two bootloaders (`egon`, default; `toc0`, signed with a throwaway key, for
 units that reject the default).
 
 ## Development
+
+The `t95` command line is documented in [docs/cli.md](docs/cli.md).
 
 ```sh
 uv sync
