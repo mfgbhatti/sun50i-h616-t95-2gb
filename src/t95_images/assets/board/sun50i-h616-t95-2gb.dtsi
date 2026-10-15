@@ -86,7 +86,13 @@
 	non-removable;
 	status = "okay";
 
+	/*
+	 * Wi-Fi is a Broadcom BCM4334-class SDIO module (AW859A) on boxes that
+	 * have Bluetooth; XR819 boxes (2.4 GHz only, no Bluetooth) use the
+	 * out-of-tree xradio driver, which matches by SDIO id and ignores this.
+	 */
 	sdio_wifi: wifi@1 {
+		compatible = "brcm,bcm4329-fmac";
 		reg = <1>;
 	};
 };
@@ -168,6 +174,26 @@
 	vcc-pg-supply = <&reg_dldo1>;
 	vcc-ph-supply = <&reg_dldo1>;
 	vcc-pi-supply = <&reg_dldo1>;
+};
+
+/* Bluetooth of the BCM4334-class module; vendor: bt_rst_n PG19, bt_wake PG17,
+ * bt_hostwake PG16, UART1 PG6-PG9 with flow control. Absent on XR819 boxes,
+ * where the node simply fails to probe. */
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
+	uart-has-rtscts;
+	status = "okay";
+
+	bluetooth {
+		compatible = "brcm,bcm4334-bt";
+		clocks = <&rtc CLK_OSC32K_FANOUT>;
+		clock-names = "lpo";
+		shutdown-gpios = <&pio 6 19 GPIO_ACTIVE_HIGH>;
+		device-wakeup-gpios = <&pio 6 17 GPIO_ACTIVE_HIGH>;
+		host-wakeup-gpios = <&pio 6 16 GPIO_ACTIVE_HIGH>;
+		max-speed = <1500000>;
+	};
 };
 
 &uart0 {
