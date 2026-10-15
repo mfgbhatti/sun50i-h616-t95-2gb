@@ -62,5 +62,5 @@ that do not boot the default one; write it at 8 KiB of the SD card). The
 LibreELEC image is not part of this release: it does not build on a free hosted
 runner (see the `libreelec` workflow).
 
-Not yet verified on hardware: see the design spec for the known limits.
+Not yet verified on hardware: see "Known limits" in the README.
 """

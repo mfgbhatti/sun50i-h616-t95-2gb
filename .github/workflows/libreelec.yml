@@ -23,12 +23,27 @@ env:
   UV_VERSION: "0.11.0"
 
 jobs:
-  libreelec:
-    runs-on: ${{ inputs.runner }}
-    timeout-minutes: 355
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: ${{ env.UV_VERSION }}
+      - run: uv sync --locked
+      - run: uv run pytest -m "not integration"
+
+  libreelec:
+    needs: test
+    runs-on: ${{ inputs.runner }}
+    # GitHub-hosted runners stop at 6 h. A self-hosted runner can run longer.
+    timeout-minutes: 1440
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: ${{ env.UV_VERSION }}
       - run: uv sync --locked
       - name: Free disk space (hosted runners only)
         if: runner.environment == 'github-hosted'

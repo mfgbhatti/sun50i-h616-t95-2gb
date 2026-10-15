@@ -58,24 +58,25 @@ creates new files only (plus one anchored line in the kernel dts Makefile), so
 no patch depends on another.
 
 ### `t95 name {armbian,libreelec} EXT`
-Print the release file name of an image.
+Print the release file name of an image. CI uses it for Armbian (`release.yml`) and
+LibreELEC (`libreelec.yml`).
 `t95-2gb-<image>-<version>-<upstream>-k<kernel>.img.<EXT>`
 
 ```sh
 $ uv run t95 name armbian xz
-t95-2gb-armbian-0.1.0-armbian26.11.0-trunk.91-k6.18.img.xz
+t95-2gb-armbian-0.1.2-armbian26.11.0-trunk.91-k6.18.img.xz
 ```
 
 ### `t95 bootloader-name {egon,toc0}`
 Print the release file name of a standalone bootloader, for example
-`t95-2gb-u-boot-egon-0.1.0-uboot2026.10-tfalts-v2.12.9.bin`.
+`t95-2gb-u-boot-egon-0.1.2-uboot2026.10-tfalts-v2.12.9.bin`.
 
 ### `t95 verify-tag TAG`
 Succeed only if `TAG` is exactly `v<project version>`. CI runs this on tag pushes.
 
 ```sh
 $ uv run t95 verify-tag v9.9.9
-error: tag 'v9.9.9' does not match project version '0.1.0' (want v0.1.0)
+error: tag 'v9.9.9' does not match project version '0.1.2' (want v0.1.2)
 ```
 
 ### `t95 notes`
@@ -84,10 +85,13 @@ passes this to `gh release create`.
 
 ## Where it is used
 
-`.github/workflows/build.yml` calls `pin` to clone the pinned upstreams, `stage`
-to add the board files, `name` / `bootloader-name` to name assets, `verify-tag`
-on tag pushes and `notes` for the release body. Changing a pin means editing
-`versions.toml`; the version comes from `pyproject.toml`.
+`.github/workflows/release.yml` (tags and manual runs) calls `pin` to clone the
+pinned upstreams, `stage` to add the board files, `name` (Armbian) and
+`bootloader-name` to name assets, `verify-tag` on tag pushes and `notes` for the
+release body. `.github/workflows/libreelec.yml` (manual only) calls `pin`,
+`stage libreelec` and `name libreelec`. See [workflows.md](workflows.md).
+Changing a pin means editing `versions.toml`; the version comes from
+`pyproject.toml`.
 
 The code lives in `src/t95_images/` (`cli.py`, `stage.py`, `patchgen.py`,
 `naming.py`, `pins.py`) and is covered by `tests/`.

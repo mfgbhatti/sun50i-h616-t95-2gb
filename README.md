@@ -50,7 +50,9 @@ Known limits and things to check on the board:
 | `src/t95_images/versions.toml` | pinned upstream versions (Armbian, LibreELEC, U-Boot, TF-A) |
 | `src/t95_images/` | `t95` CLI: staging, patch generation, naming, release notes (see [docs/cli.md](docs/cli.md)) |
 | `docs/flashing.md` | how to write the images and bootloaders to an SD card |
-| `.github/workflows/build.yml` | CI: test, bootloader, armbian, libreelec, release |
+| `.github/workflows/release.yml` | CI on `v*` tags and manual runs: test, bootloaders, Armbian, release |
+| `.github/workflows/libreelec.yml` | CI, manual only: test, then the LibreELEC image (needs a larger or self-hosted runner) |
+| `docs/workflows.md` | what each workflow does and why LibreELEC is separate |
 | `reference/vendor/` | original vendor files and old patches (reference only) |
 
 ## Releases
@@ -58,16 +60,19 @@ Known limits and things to check on the board:
 Version = `version` in `pyproject.toml`. To release:
 
 1. Bump `version` in `pyproject.toml` (and pins in `versions.toml` if needed),
+   then run `uv lock`.
 2. Commit, then `git tag v<version> && git push --tags`.
 
-Run workflow). A tag must equal `v<version>`. The release job publishes only
-when every build job succeeded, so while LibreELEC cannot finish on a hosted
-runner, run the workflow manually with target `armbian` and fetch the images
-from the run's artifacts. Artifacts are kept for one day.
+The `release` workflow runs on the tag (or manually; tick `publish` to create a
+GitHub Release from a manual run). A tag must equal `v<version>`. The release
+job publishes only when the bootloader and Armbian jobs succeeded. Artifacts
+from the run are kept for one day.
 
-Release assets: Armbian image and LibreELEC image (both with `.sha256`), and
-two bootloaders (`egon`, default; `toc0`, signed with a throwaway key, for
-units that reject the default).
+Release assets: the Armbian image (with `.sha256`) and two bootloaders (`egon`,
+default; `toc0`, signed with a throwaway key, for units that reject the
+default). The LibreELEC image is **not** part of the release: build it with the
+manual `libreelec` workflow (see [docs/workflows.md](docs/workflows.md)); its
+artifact is kept for 14 days.
 
 ## Flashing
 
