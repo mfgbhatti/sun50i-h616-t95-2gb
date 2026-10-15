@@ -84,5 +84,6 @@ sync
 
 LibreELEC images are written the same way. They are `.img.gz`, so use
 `gzip -dc image.img.gz | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`.
-CI does not currently build this image (see the README), so you need one built
-elsewhere.
+CI does not build this image for releases (see the README). Build it with the
+manual `libreelec` workflow or locally: see
+[workflows.md](workflows.md#building-locally).

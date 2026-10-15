@@ -16,7 +16,7 @@ the board files into them.
 | Tests (`uv run pytest`) | pass |
 | Bootloaders (U-Boot eGON + signed TOC0, TF-A bl31) | build on GitHub Actions, boot headers checked |
 | Armbian image | builds on GitHub Actions (about 65 min, ~360 MB `.img.xz`); the dtb is checked to be in the `linux-dtb` package |
-| LibreELEC image | **does not finish on a free hosted runner**: it compiles the whole OS and hits the 6-hour job limit. Build it on a larger or self-hosted runner, or by hand |
+| LibreELEC image | **does not finish on a free hosted runner**: it compiles the whole OS and hits the 6-hour job limit. Build it on a larger or self-hosted runner, or by hand ([how](docs/workflows.md#building-locally)) |
 | On real hardware | **not booted yet** |
 
 What the Armbian dtb enables: HDMI video (display engine + HDMI, no Mali GPU),
