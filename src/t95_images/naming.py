@@ -52,13 +52,15 @@ Images for the T95 2GB (Allwinner H616) TV box, built from pinned upstream versi
 | Component | Version |
 |---|---|
 | Armbian build framework | `{a['ref']}` (kernel {a['kernel_major_minor']}, `{a['release']}`) |
-| LibreELEC | `{le['ref']}` (kernel {le['kernel']}, U-Boot {le['uboot']}, TF-A {le['tfa']}) |
+| LibreELEC (built separately, not in this release) | `{le['ref']}` (kernel {le['kernel']}, U-Boot {le['uboot']}, TF-A {le['tfa']}) |
 | U-Boot (standalone bootloaders) | `{b['uboot_ref']}` |
 | TF-A (standalone bootloaders) | `{b['tfa_ref']}` |
 
-Assets: `armbian` and `libreelec` images with `.sha256` files, plus two standalone
+Assets: the `armbian` image with a `.sha256` file, plus two standalone
 bootloaders: `egon` (default) and `toc0` (signed with a throwaway key, for units
-that do not boot the default one; write it at 8 KiB of the SD card).
+that do not boot the default one; write it at 8 KiB of the SD card). The
+LibreELEC image is not part of this release: it does not build on a free hosted
+runner (see the `libreelec` workflow).
 
 Not yet verified on hardware: see the design spec for the known limits.
 """

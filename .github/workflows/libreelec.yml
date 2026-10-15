@@ -1,0 +1,73 @@
+name: libreelec
+
+# LibreELEC compiles its whole OS from source. That takes more than the 6 hours
+# a free GitHub-hosted runner allows, so this is a separate, manual-only
+# workflow and is not part of the release. Run it on a larger or self-hosted
+# runner (give its label below), or build by hand with the same commands.
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: Runner label (a larger or self-hosted runner; the free ubuntu-24.04 will hit the 6 h limit)
+        type: string
+        default: ubuntu-24.04
+
+permissions:
+  contents: read
+
+concurrency:
+  group: libreelec-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.11.0"
+
+jobs:
+  libreelec:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - run: uv sync --locked
+      - name: Free disk space (hosted runners only)
+        if: runner.environment == 'github-hosted'
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gcc make git wget curl bc patchutils unzip xz-utils zip lzop gawk gperf \
+            xsltproc default-jre libxml-parser-perl libjson-perl libncurses-dev \
+            libparse-yapp-perl python3 python3-pyelftools u-boot-tools swig \
+            zstd file rsync cpio texinfo bison flex libssl-dev autoconf automake \
+            libtool pkg-config libc6-dev g++ xfonts-utils rdfind
+      - name: Fetch pinned LibreELEC
+        run: |
+          pin="$(uv run t95 pin libreelec.ref)"
+          repo="$(uv run t95 pin libreelec.repo)"
+          git init libreelec
+          git -C libreelec fetch --depth 1 "$repo" "$pin"
+          git -C libreelec checkout --detach FETCH_HEAD
+      - name: Stage board files
+        run: uv run t95 stage libreelec libreelec
+      - name: Build image
+        working-directory: libreelec
+        run: PROJECT=Allwinner DEVICE=H616 ARCH=aarch64 UBOOT_SYSTEM=t95-2gb make image
+      - name: Collect image
+        run: |
+          set -e
+          img=$(ls libreelec/target/*.img.gz | head -n1)
+          mkdir -p out
+          name="$(uv run t95 name libreelec gz)"
+          cp "$img" "out/$name"
+          (cd out && sha256sum "$name" > "$name.sha256")
+          ls -l out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: libreelec
+          path: out/*
+          if-no-files-found: error
+          retention-days: 14
