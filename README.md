@@ -49,6 +49,7 @@ Known limits and things to check on the board:
 | `src/t95_images/assets/` | shared board dts/dtsi, per-image dts variants, U-Boot defconfig, Armbian board file |
 | `src/t95_images/versions.toml` | pinned upstream versions (Armbian, LibreELEC, U-Boot, TF-A) |
 | `src/t95_images/` | `t95` CLI: staging, patch generation, naming, release notes (see [docs/cli.md](docs/cli.md)) |
+| `docs/flashing.md` | how to write the images and bootloaders to an SD card |
 | `.github/workflows/build.yml` | CI: test, bootloader, armbian, libreelec, release |
 | `reference/vendor/` | original vendor files and old patches (reference only) |
 
@@ -67,6 +68,10 @@ from the run's artifacts. Artifacts are kept for one day.
 Release assets: Armbian image and LibreELEC image (both with `.sha256`), and
 two bootloaders (`egon`, default; `toc0`, signed with a throwaway key, for
 units that reject the default).
+
+## Flashing
+
+See [docs/flashing.md](docs/flashing.md) for writing the Armbian image and the standalone bootloaders to an SD card.
 
 ## Development
 
